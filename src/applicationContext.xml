@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd" xmlns:tx="http://www.springframework.org/schema/tx">
+
+
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	  <property name="locations">
+	   <list>
+	    <value>classpath:jdbc.properties </value>
+	   </list>
+	  </property>
+	</bean>
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	  <property name="driverClassName" value="${jdbc.driverClassName}" />
+	  <property name="url" value="${jdbc.url}" />
+	  <property name="username" value="${jdbc.username}"/>
+	  <property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.MySQLDialect
+				</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop> 
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+				<value>com/slack/pojo/Message.hbm.xml</value>
+				<value>com/slack/pojo/SpaceMem.hbm.xml</value>
+				<value>com/slack/pojo/WorkSpace.hbm.xml</value>
+				<value>com/slack/pojo/ChaMem.hbm.xml</value>
+				<value>com/slack/pojo/Chan.hbm.xml</value>
+				<value>com/slack/pojo/SpaceMemTimeAddition.hbm.xml</value>
+				<value>com/slack/pojo/Customer.hbm.xml</value>
+				<value>com/slack/pojo/SpaceMemTime.hbm.xml</value></list>
+		</property>
+	</bean>
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<!-- Dao -->
+	<bean id="baseDAO" class="com.slack.idao.BaseDAOImpl" scope="prototype">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean
+		id="messageDAO" class="com.slack.idao.MessageDAOImpl" parent="baseDAO" scope="prototype">
+		<!-- <property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property> -->
+	</bean>
+	<bean id="spaceMemDAO" class="com.slack.idao.SpaceMemDAOImpl" parent="baseDAO" scope="prototype">
+		<!-- <property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property> -->
+	</bean>
+	<bean id="workSpaceDAO" class="com.slack.idao.WorkSpaceDAOImpl" parent="baseDAO" scope="prototype">
+		<!-- <property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property> -->
+	</bean>
+	<bean id="chaMemDAO" class="com.slack.idao.ChaMemDAOImpl" parent="baseDAO" scope="prototype">
+		<!-- <property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property> -->
+	</bean>
+	<bean id="chanDAO" class="com.slack.idao.ChanDAOImpl" parent="baseDAO" scope="prototype">
+		<!-- <property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property> -->
+	</bean>
+	<bean id="spaceMemTimeAdditionDAO"
+		class="com.slack.idao.SpaceMemTimeAdditionDAOImpl" parent="baseDAO" scope="prototype">
+		<!-- <property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property> -->
+	</bean>
+	<bean id="customerDAO" class="com.slack.idao.CustomerDAOImpl" parent="baseDAO"  scope="prototype" />
+
+	<bean id="spaceMemTimeDAO" class="com.slack.idao.SpaceMemTimeDAOImpl" parent="baseDAO" scope="prototype">
+		<!-- <property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property> -->
+	</bean>
+	
+		<!-- Action -->
+	<bean id="LoginAction" class="com.slack.action.LoginAction" scope="prototype">
+	 	<property name="ctmDao" ref="customerDAO"></property>
+	</bean>
+	</beans>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
+	
+	
+    
+</script>
+	<link rel="errormess" href="error.css">
+</head>
+<body>
+<div style="width:500px;margin-left:auto;margin-right:auto;" >
+		 <br/>
+         <br/>
+		 <br/>
+         <br/>
+         <label for="username" style="font-size:18px" >Username：</label>
+			<br/>
+         <div style="height:35px;width:400px;position:relative;display:inline" >   
+             <input id="username" type="text" style="height:30px;width:350px;padding-right:50px;">
+         </div>
+         <br/>
+         <br/>
+         <label for="password" style="font-size:18px" >Password：</label>
+		 <br/>
+         <div style="height:35px;width:400px;position:relative;display:inline" >   
+             <input id="password" type="password" style="height:30px;width:350px;padding-right:50px;">
+         </div>
+         <br/>
+         <br/>
+         <!--<label for="verification_code" style="font-size:18px" >验证码：</label>
+         <input id="verification_code" type="text" style="height:30px;width:350px;">
+         <br/>
+         <br/>-->
+         
+		<div id="errormessage"></div>
+	
+
+         <br/>
+         <div style="width:426px;left:auto;right:auto;">
+			 
+			 <button type="button" id="signin" style="height:30px;width:200px;background-color:white;">Sign in</button>
+			 <a href="./register.html"><button type="button" id="signup" style="height:30px;width:200px;background-color:white;" >Sign up</button></a>
+         </div>
+     </div>
+<script>
+var pendingRequests = {};
+
+function generatePendingRequestKey(options){
+return options.url;
+}
+function  storePendingRequest(key,jqXHR){
+pendingRequests[key]=jqXHR;
+jqXHR.pendingRequestKey = key;
+}
+
+$.ajaxPrefilter(function(options, originalOptions, jqXHR ) {
+    var key = generatePendingRequestKey(options);
+    if (!pendingRequests[key]) {
+    	storePendingRequest(key, jqXHR);
+    } else {
+    	// or do other
+    	jqXHR.abort();
+    }	
+	var success = options.success;
+	options.success = function(jqXHR, textStatus) {
+		if ($.isFunction(success)) {
+			success.apply(this, arguments);
+		}
+	};	 
+	var error = options.error;
+	options.error = function(jqXHR, textStatus) {
+		if ($.isFunction(error)) {
+			error.apply(this, arguments);
+		}
+	};
+	var complete = options.complete;
+	options.complete = function(jqXHR, textStatus) {
+		// clear from pending requests
+		pendingRequests[jqXHR.pendingRequestKey] = null;
+		if ($.isFunction(complete)) {
+			complete.apply(this, arguments);
+		}
+	};
+});
+
+var post_flag_inputExist = false;
+$(window).on('load', function() { 
+	if (cookieEnable()) {
+		alreadyLogged();
+	}
+	
+
+	$("#signin").off().on('click',function(){
+		 login();
+	});
+ });
+$("#username").focus(function(){
+	console.log("focus on username !");
+	if (post_flag_inputExist) return;
+	inputExist();
+});
+
+function cookieEnable() {
+	var res = "is broswer enabling Cookie?" + navigator.cookieEnabled;
+	var f = window.localStorage.getItem("cookie_enable");
+	console.log("cookie_enable : " + f);
+	
+		if (res) {
+			if (f == null) {				
+				alert("your broswer allow cookie! That is nice!");
+			}
+			window.localStorage.setItem("cookie_enable", true);
+			return true;
+		return false
+	} else {
+		window.localStorage.setItem("cookie_enable", false);
+		jump_cookie_enable();
+		return false;
+	}	
+}
+
+function jump_cookie_enable() {
+	$('<div></div>').attr('id', 'enable_cookie').attr('style','margin-left:auto;margin-right:auto;').dialog({
+			        modal: true,
+			        title: "Enabeling Cookie?",
+			        open: function () {
+				            var a = [];					
+							a.push("<h2>In Chrome</h2><ol><li>On your computer, open Chrome.</li><li>At the top right, click More <img src='//lh3.googleusercontent.com/mR6ULZOdPFY5nzxPHdvC-7Rl5jDPqwBdfPDSVDg3DLnWBNGi-lVTXCsvUY7S1pYFFg=w18-h18' width='18' height='18' alt='More' title='More'>&nbsp;<img src='//lh3.googleusercontent.com/BP4EnS7AofL2zeRKpT9xDZR3DjOD0nQ_pvAI-VTHx4RZoPD-QVVWwsjNn3lv3OxO8FI=w18-h18' width='18' height='18' alt='and then' title='and then'> <strong>Settings</strong>.</li><li>At the bottom, click <strong>Advanced</strong>.</li><li>Under 'Privacy and security,' click <strong>Content settings</strong>.</li><li>Click <strong>Cookies</strong>.</li><li>From here, you can:<ul><li>Turn on cookies: Next to 'Blocked,' turn on the switch.</li><li>Turn off cookies: Turn off <strong>Allow sites to save and read cookie data</strong>.</li></ul></li></ol>");
+				            $(this).html(a);
+			       		 },
+		      		buttons: {
+				        	YES : function () {
+					        	alert("your setting will be avaible next time you open the broswer!");
+				        	},
+				        	
+				            NO : function () {
+				            	window.localStorage.setItem("cookie_enable", false);
+				                alert("you can change your mind every time, just finishing setting and open broswer again!");
+				            }
+				        }
+			    }); //end_dialog
+}
+
+function alreadyLogged() {
+	$.ajax({		
+			type : "POST",
+ 			url : "LoginAction_alreadyLogged",
+ 			dataType : "json",
+ 			success : function(data){
+	 			 			if (Object.keys(data).length > 0) {
+								$('<div></div>').attr('id', 'jump_window').attr('style','margin-left:auto;margin-right:auto;').dialog({
+							        modal: true,
+							        title: "Your Accounts",
+							        open: function () {
+								            var a = [];					
+											$.each(data, function(k, v) {
+											  var t = k.substring(3);
+											  a.push("<input type = 'radio' style = 'margin-left:20%;margin-right:auto;' value = '" + t + "'>" + t + "<input type = 'hidden' value = '" + v + "'>");
+											});
+								            $(this).html(a);
+							       		 },
+							        buttons: {
+							        	YES : function () {
+								        	var t1 = $('#jump_window input:radio:checked').val();
+								        	var t2 = $('#jump_window input:radio:checked').index();
+											if(t1 == null) {
+												t1 = $('#jump_window intput:radio:eq(0)').val();
+												t2 = 0;
+											}
+											console.log("t1" + t1);
+											console.log("t2" + t2);
+											$.ajax({
+												type : "POST",
+												url : "LoginAction_autoLogin",
+												dataType : "json",
+												data : {"nickNameOrUserEmail":JSON.stringify(t1), "uid":JSON.stringify(t2)},
+												success : function(data) {
+												console.log(data);
+														if (data.res == true){
+															if (data.state == true) {
+																console.log("succ!");	
+															} else {
+																alert("this should not occur1!!!");
+															}
+															
+															// go to index.html from C
+															window.location.href = "index.jsp";
+														} else if (!data.res) {
+															console.log(data.res)
+															alert("this should not occur2!!!");	
+														} else {
+															alert("nothing at all!");
+															console.log(data);
+														}
+												},
+												error : function(xmlHttpRequest,testStus,errorThrown){
+														console.log(xmlHttpRequest);
+														console.log(testStus);
+														console.log(errorThrown);
+														alert("this should not occur3!!!");	
+													}	
+											});
+							        	},
+							        	
+							            NO : function () {
+							                $(this).dialog("close");
+							            }
+							        }
+							    }); //end_dialog
+							}
+					  }
+		   });
+}
+
+function inputExist() {
+	var signal_ajax_inputExist = false;
+	$("#password").focus(function() {
+		var t_inputExist = $("#username").val();
+		console.log(t_inputExist);
+		var f_inputExist = 0;
+		if (t_inputExist.indexOf("@") >= 0 ) {
+			console.log("it is email!");
+			f_inputExist = $.check_input.email(t_inputExist);
+			console.log("f_inputExist : " + f_inputExist);
+			if (f_inputExist == 1) {
+				alert("please enter the right email!");
+				$("#username").val('');	
+				$("#username").focus();	
+				return;
+			}
+		}
+		signal_ajax_inputExist = true;
+		post_flag_inputExist = true;
+		if (signal_ajax_inputExist) {
+			$.ajax({		
+				type : "POST",
+	 			url : "LoginAction_inputExist",
+	 			data : {"isEmail":JSON.stringify(f_inputExist), "nickNameOrUserEmail":JSON.stringify(t_inputExist)},
+	 			dataType : "json",
+	 			success : function(data){
+			 				post_flag_inputExist = false;
+							if (data.res == true){
+								console.log("succ!");	
+								$("#password").focus();	
+							} else if (!data.res) {
+							console.log(data);
+							console.log(data.res)
+								alert("please enter the right user name or email!");	
+								//window.location.href = "login.html";								
+								$("#username").val('');	
+								$("#username").focus();		
+							} else {
+							//alert("nothing at all!");
+							console.log(data);
+							}
+					},
+				error: function(xmlHttpRequest,testStus,errorThrown){
+						post_flag_inputExist = false; 
+						console.log(xmlHttpRequest);
+						console.log(testStus);
+						console.log(errorThrown);
+						alert("System goes wrong, please try again!");
+					}														
+				});
+		}
+		
+	});	
+}
+	
+function login() {
+	var t_login = $("#username").val();
+	var f_login = 0;
+	var signal_ajax_login = true;
+	if (t_login.indexOf("@") >= 0 ) {
+		console.log("it is email!");
+		f_login = $.check_input.email(t_login);
+		console.log("f_login : " + f_login);
+		if (f_login == 1) {
+			alert("please enter the right email!");
+			$("#username").val('');	
+			$("#username").focus();	
+			return;
+		}
+	}
+	signal_ajax_login = true;
+	if (signal_ajax_login) {
+	$.ajax({		
+			type : "POST",
+ 			url : "LoginAction_login",
+ 			dataType : "json",
+ 			data:{
+				"isEmail":JSON.stringify(f_login),
+				"nickNameOrUserEmail":(t_login),
+				"passWord":JSON.stringify($("#password").val())
+				},
+ 			success : function(data){
+		 				post_flag_inputExist = false;
+						if (data.res == true){
+							if (data.state == true) {
+								console.log("succ!");	
+							} else {
+								alert("you already logged in! Do not log again!");
+							}
+							
+							// go to index.html from C
+							window.location.href = "index.jsp";
+						} else if (!data.res) {
+							console.log(data.res)
+							alert("please enter the right user name or email and password!");	
+							$("#username").val('');	
+							$("#username").focus();		
+						} else {
+							alert("nothing at all!");
+							console.log(data);
+						}
+				},
+			error: function(xmlHttpRequest,testStus,errorThrown){
+					post_flag_login = false; 
+					alert("System goes wrong, please try again! Or you can contact our clerk Mr.Robot!");
+				}														
+			});
+	}
+	
+}
+  
+</script>
+<script type="text/javascript">
+$.check_input = {
+  email : function(data) {
+    var check_input_email = /^([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/; 
+    if (data.match(check_input_email)) return 2;
+    else return 1;
+  },
+  nickname : function(data) {
+    var check_input_nickname = /^\w+$/;
+    if (data.match(check_input_nickname)) return 2;
+    else return 0;
+  }
+}	
+</script>
+</body>
+</html>

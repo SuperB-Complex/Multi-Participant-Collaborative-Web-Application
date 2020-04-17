@@ -1,0 +1,20 @@
+#MyEclipse Hibernate Properties
+#Wed May 01 02:27:48 EDT 2019
+genBasicCompId=true
+sessionFactoryName=com.slack.tool.HibernateSessionFactory
+profile=
+daoSFId=sessionFactory
+jndiPath=
+detectM2M=true
+reStrategyClass=
+detectO2O=true
+springDaoFile=src/applicationContext.xml
+useJavaTypes=true
+keyGenerator=native
+genVersionTag=true
+sessionFactoryId=sessionFactory
+basePersistenceClass=
+genAnnotations=false
+reSettingsFile=/DB_02118/hibernate.reveng.xml
+configFile=/DB_02118/src/applicationContext.xml
+createConfigFile=true

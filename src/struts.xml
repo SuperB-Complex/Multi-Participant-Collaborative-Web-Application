@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+    <constant name="struts.i18n.encoding" value="utf-8" />
+    <constant name="struts.i18n.reload" value="true" />
+    <constant name="struts.devMode" value="true" />  
+    <!-- <constant name="struts.action.extension" value="action,," /> -->
+    <constant name="struts.ui.theme" value="simple" />
+    
+	<package name="df" extends="struts-default,json-default">
+	
+		<action name="LoginAction_*" class="LoginAction" method="{1}">
+			<result type="json">
+				<param name="root">result</param>
+			</result>		
+		</action>
+	</package>
+
+</struts>    
+<!-- 		<result-types>
+            <result-type name="json" class="org.apache.struts2.json.JSONResult"/>
+            <param name="root">result</param>
+        </result-types>
+        <interceptors>
+            <interceptor name="json" class="org.apache.struts2.json.JSONInterceptor"/>
+        </interceptors>
+        
+		<result name="success"  type="dispatcher">/index.jsp</result>
+		<result name="error">/index.jsp</result>
+			 <result name="success">/index.jsp</result>
+			<result name="error">/index.jsp</result> -->

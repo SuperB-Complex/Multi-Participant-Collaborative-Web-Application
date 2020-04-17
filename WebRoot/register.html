@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Register</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+	<script >
+function checkpwd(){
+var p1=document.getElementById("password").value;
+var p2=document.getElementById("password1").value;
+if(p1!=p2){
+document.getElementById("msg").innerHTML="differend pwd";
+	document.getElementById("signup").disabled="true";
+}else{
+	document.getElementById("msg").innerHTML="same pwd";
+	document.getElementById("signup").disabled="";
+}
+}
+</script>
+<style type="text/css">
+#border {
+    border: thin solid #000000;
+	width:500px;
+	margin-left:auto;
+	margin-right:auto;
+    
+}
+</style>
+</head>
+
+<body>
+	
+<div id="border">
+	<br/>
+         <br/>
+		 <br/>
+         <br/>
+         <label for="username" style="font-size:18px" >&nbsp; Username：</label>
+         <div style="height:35px;width:400px;position:relative;display:inline" >   
+             <input id="username" type="text" style="height:30px;width:300px;padding-right:50px;">
+         </div>
+		 <br/>
+         <br/>
+         <label for="usermail" style="font-size:18px">&nbsp; Email： &nbsp; &nbsp; </label>
+         <div style="height:35px;width:400px;position:relative;display:inline" >   
+             <input id="usermail" type="text" style="height:30px;width:300px;padding-right:50px;">
+  </div>
+         <br/>
+         <br/>
+  <label for="nickname" style="font-size:18px" >&nbsp; Nickname：</label>
+         <div style="height:35px;width:400px;position:relative;display:inline" >   
+           <input id="nickname" type="text" style="height:30px;width:300px;padding-right:50px;">
+         </div>
+         <br/>
+         <br/>
+  <label for="password" style="font-size:18px" >&nbsp; Password：&nbsp; </label>
+         <div style="height:35px;width:400px;position:relative;display:inline" >   
+             <input id="password" type="password" style="height:30px;width:300px;padding-right:50px;">
+         </div>
+         <br/>
+         <br/>
+		 <label for="password1" style="font-size:18px" >&nbsp; Re-Password：</label>
+         <div style="height:35px;width:400px;position:relative;display:inline" >   
+             <input id="password1" onKeyUp="checkpwd()" type="password" style="height:30px;width:250px;padding-right:50px;"   >
+         </div>
+			<div id="msg" style="color:red;"></div>
+         <br/>
+         <br/>
+		 <div style="width:426px;margin-left:auto;
+			margin-right:auto;">
+			 
+			 <button type="button" id="signup" style="height:30px;width:200px;background-color:white;">Sign up</button>
+			 <a href="./index.html"><button type="button" id="back" style="height:30px;width:200px;background-color:white;" >Back</button></a>
+         </div>
+		<br/>
+         <br/>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" >
+
+<hibernate-reverse-engineering>
+	<table name="chamem" catalog="db_pj1_tt1"
+		class="com.slack.dao.ChaMem">
+	</table>
+	<table name="chan" catalog="db_pj1_tt1"
+		class="com.slack.dao.Chan">
+	</table>
+	<table name="customer" catalog="db_pj1_tt1"
+		class="com.slack.dao.Customer">
+	</table>
+	<table name="message" catalog="db_pj1_tt1"
+		class="com.slack.dao.Message">
+	</table>
+	<table name="spacemem_time_addition" catalog="db_pj1_tt1"
+		class="com.slack.dao.SpaceMemTimeAddition">
+	</table>
+	<table name="spacemem_time" catalog="db_pj1_tt1"
+		class="com.slack.dao.SpaceMemTime">
+	</table>
+	<table name="spacemem" catalog="db_pj1_tt1"
+		class="com.slack.dao.SpaceMem">
+	</table>
+	<table name="workspace" catalog="db_pj1_tt1" class="com.slack.dao.WorkSpace"></table>
+</hibernate-reverse-engineering>
